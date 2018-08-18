@@ -399,7 +399,7 @@ void ExtraInfoWidget::onInstructionButton(cocos2d::Ref *) {
         __UTF8("13. 双暗杠6番，一明杠一暗杠5番，双明杠4番。暗杠的加计遵循国际麻将联盟（MIL）的规则，即杠系列和暗刻系列最多各计一个。"),
         "Arail", 10, Size(maxWidth, 0.0f));
     label->setTextColor(C4B_BLACK);
-    label->setLineSpacing(5);
+    label->setLineSpacing(2.0f);
 
     Node *node = nullptr;
 
@@ -448,7 +448,7 @@ void ExtraInfoWidget::showInputAlert(const char *prevInput) {
         __UTF8("  (3) [WWWW,1][444s]45m678pFF6m"),
         "Arial", 10, Size(maxWidth, 0.0f));
     label->setTextColor(C4B_BLACK);
-    label->setLineSpacing(5);
+    label->setLineSpacing(2.0f);
 
     // 超出高度就使用ScrollView
     const Size &labelSize = label->getContentSize();
