@@ -1274,6 +1274,7 @@ void ScoreSheetScene::onInstructionButton(cocos2d::Ref *) {
         __UTF8("5. 「历史记录」里的内容只要不卸载程序就会一直保存。"),
         "Arial", 10, Size(AlertDialog::maxWidth(), 0.0f));
     label->setTextColor(C4B_BLACK);
+    label->setLineSpacing(5);
 
     AlertDialog::Builder(this)
         .setTitle(__UTF8("使用说明"))
