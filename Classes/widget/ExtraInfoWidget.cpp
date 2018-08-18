@@ -431,7 +431,7 @@ void ExtraInfoWidget::onInstructionButton(cocos2d::Ref *) {
 }
 
 void ExtraInfoWidget::showInputAlert(const char *prevInput) {
-    const float width = AlertDialog::maxWidth();
+    const float maxWidth = AlertDialog::maxWidth();
 
     Node *rootNode = Node::create();
 
@@ -446,14 +446,39 @@ void ExtraInfoWidget::showInputAlert(const char *prevInput) {
         __UTF8("  (1) [EEEE][CCCC][FFFF][PPPP]NN\n")
         __UTF8("  (2) 1112345678999s9s\n")
         __UTF8("  (3) [WWWW,1][444s]45m678pFF6m"),
-        "Arial", 10, Size(width, 0.0f));
+        "Arial", 10, Size(maxWidth, 0.0f));
     label->setTextColor(C4B_BLACK);
     label->setLineSpacing(5);
 
-    rootNode->addChild(label);
+    // 超出高度就使用ScrollView
+    const Size &labelSize = label->getContentSize();
+    const float maxHeight = cocos2d::Director::getInstance()->getVisibleSize().height * 0.8f - 80.0f - 30.0f;
+    if (labelSize.height <= maxHeight) {
+        rootNode->addChild(label);
+        label->setPosition(Vec2(maxWidth * 0.5f, labelSize.height * 0.5f + 30.0f));
+        rootNode->setContentSize(Size(maxWidth, labelSize.height + 30.0f));
+    }
+    else {
+        Size textSize(maxWidth, maxHeight);
+
+        ui::ScrollView *scrollView = ui::ScrollView::create();
+        scrollView->setDirection(ui::ScrollView::Direction::VERTICAL);
+        scrollView->setScrollBarPositionFromCorner(Vec2(2.0f, 2.0f));
+        scrollView->setScrollBarWidth(4.0f);
+        scrollView->setScrollBarOpacity(0x99);
+        scrollView->setContentSize(textSize);
+        scrollView->setInnerContainerSize(labelSize);
+        scrollView->addChild(label);
+        label->setPosition(Vec2(labelSize.width * 0.5f, labelSize.height * 0.5f));
+
+        rootNode->addChild(scrollView);
+        scrollView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        scrollView->setPosition(Vec2(maxWidth * 0.5f, textSize.height * 0.5f + 30.0f));
+        rootNode->setContentSize(Size(maxWidth, textSize.height + 30.0f));
+    }
 
     // 输入手牌
-    ui::EditBox *editBox = UICommon::createEditBox(Size(width, 20.0f));
+    ui::EditBox *editBox = UICommon::createEditBox(Size(maxWidth, 20.0f));
     editBox->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
     editBox->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
     editBox->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
@@ -467,11 +492,7 @@ void ExtraInfoWidget::showInputAlert(const char *prevInput) {
     }
 
     rootNode->addChild(editBox);
-
-    const Size &labelSize = label->getContentSize();
-    rootNode->setContentSize(Size(width, labelSize.height + 30.0f));
-    editBox->setPosition(Vec2(width * 0.5f, 15.0f));
-    label->setPosition(Vec2(width * 0.5f, labelSize.height * 0.5f + 30.0f));
+    editBox->setPosition(Vec2(maxWidth * 0.5f, 15.0f));
 
     AlertDialog::Builder(Director::getInstance()->getRunningScene())
         .setTitle(__UTF8("直接输入"))
